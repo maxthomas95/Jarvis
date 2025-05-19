@@ -39,6 +39,12 @@ Jarvis currently runs locally on your machine and can:
 - Understand context, wit, sarcasm, and subtlety
 - Fall back to local models when needed (planned)
 
+<p align="left">
+  <img src="./Animation.gif" alt="Jarvis in Action" width="600"/>
+  <br>
+  <sub><i>Live demo: Jarvis listening, thinking, and speaking in real time</i></sub>
+</p>
+
 ---
 
 ## 📊 Architecture Diagrams
@@ -301,6 +307,59 @@ TRUENAS_API_KEY=...
 
 ---
 
+## 🚀 Installation & Setup
+
+### 1. **Clone the Repo**
+
+```bash
+git clone https://github.com/yourusername/jarvis.git
+cd jarvis
+```
+
+### 2. **Create a Virtual Environment**
+
+```bash
+python -m venv venv
+# Activate it:
+# On macOS/Linux:
+source venv/bin/activate
+# On Windows:
+venv\Scripts\activate
+```
+
+### 3. **Install Requirements**
+
+```bash
+pip install -r requirements.txt
+```
+
+> 💡 Don't forget to install `pyaudio` using a wheel if it fails on Windows. You can also substitute with `sounddevice` if needed.
+
+### 4. **Create Your Environment File**
+
+```bash
+cp .env.example .env
+```
+
+Fill in your API keys and config inside the new `.env` file:
+
+```env
+OPENAI_API_KEY=your_openai_key
+ELEVENLABS_API_KEY=your_elevenlabs_key
+VOICE_MODE=True
+USE_LOCAL_MODEL=False
+```
+
+### 5. **Run Jarvis**
+
+```bash
+python main.py
+```
+
+Jarvis will start in voice or text mode depending on your `.env` settings.
+
+---
+
 ## 🧠 Voice Flow Examples
 
 A few examples of Jarvis doing what he does best — executing commands with sarcasm, style, and just enough judgment to keep things interesting.
@@ -384,13 +443,100 @@ You: "Jarvis, play baby shark."
 Jarvis: "No."
 ```
 
-
 ---
 
 ## 👨‍💻 Dev Notes
 - Voice recognition uses Google Speech Recognition
 - All prompts are tuned for smart home relevance and sarcasm
 - Spotcast casting logic is handled through context injection in the system prompt
+
+---
+
+## 🛟️ Troubleshooting
+
+### ❌ `pyaudio` installation fails
+**Issue**: `pip install pyaudio` fails, especially on Windows.
+
+**Solution**:
+- Download `.whl` from [Gohlke's unofficial builds](https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio)
+- Or use `sounddevice` as a replacement if supported by your audio setup.
+
+---
+
+### ❌ Microphone not detected
+**Issue**: No input or Jarvis crashes on mic init.
+
+**Solution**:
+- Ensure mic is plugged in and default.
+- On Linux:
+
+```bash
+sudo apt install portaudio19-dev
+```
+
+- Check OS permissions and privacy settings.
+
+---
+
+### ❌ `NoneType` or blank response from OpenAI
+**Issue**: Conversation handler gets no reply.
+
+**Solution**:
+- Check `OPENAI_API_KEY` in `.env`
+- Validate `.env` is loaded (print debug or log config)
+- Check OpenAI usage limits in your account dashboard
+
+---
+
+### ❌ ElevenLabs not speaking
+**Issue**: TTS doesn't play anything.
+
+**Solution**:
+- Set `VOICE_MODE=True`
+- Verify audio output isn't muted or missing drivers
+- Check for correct ElevenLabs API key
+
+---
+
+### ❌ Plugins not responding
+**Issue**: No action taken on valid input.
+
+**Solution**:
+- Confirm plugin file is in `plugins/` folder
+- Verify it contains a `Plugin` class with `can_handle` and `handle`
+- Run `main.py` and look for plugin loader logs
+
+---
+
+### ❌ `ModuleNotFoundError` on startup
+**Issue**: Missing package error.
+
+**Solution**:
+- Double check `requirements.txt` was installed properly:
+
+```bash
+pip install -r requirements.txt
+```
+
+- Recreate your virtual environment if needed:
+
+```bash
+rm -rf venv
+python -m venv venv
+```
+
+---
+
+### ❌ Audio playback crashes on macOS
+**Issue**: TTS audio cuts off or crashes on Mac.
+
+**Solution**:
+- Try using `pyobjc` or `sounddevice` if `pyaudio` is unstable
+- Run with `VOICE_MODE=False` for testing
+
+---
+
+Need more help? [Open an issue](https://github.com/yourusername/jarvis/issues) or drop me a message.
 
 ---
 
@@ -402,6 +548,3 @@ Jarvis: "No."
 - [Ollama](https://ollama.com) for future local LLM support
 
 ---
-
-## 👁️‍🗨️ License
-MIT License. Use freely, modify wildly, and build your own Jarvis army.
